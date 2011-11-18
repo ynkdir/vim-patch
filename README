@@ -1,0 +1,5 @@
+patch written in VimL.
+
+Usage:
+  :set runtimepath=/path/to/vim-patch
+  :set patchexpr=patch#patchexpr()
