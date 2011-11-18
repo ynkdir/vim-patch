@@ -5,6 +5,7 @@ function! s:syspatch(oldfile, patchfile)
   let tmp = tempname()
   call system(printf('patch -s -o %s %s %s', shellescape(tmp), shellescape(a:oldfile), shellescape(a:patchfile)))
   let out = readfile(tmp, 'b')
+  call delete(tmp)
   return out
 endfunction
 
