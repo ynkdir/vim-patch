@@ -1,3 +1,7 @@
+" http://en.wikipedia.org/wiki/Patch_%28Unix%29
+" http://en.wikipedia.org/wiki/Diff
+" http://pubs.opengroup.org/onlinepubs/9699919799/utilities/diff.html
+
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -151,8 +155,13 @@ function s:Patch.parse_context(diff)
       if empty(m)
         throw 'parse error'
       endif
-      let oldstart = m[1] - 1
-      let oldcount = (m[2] == '' ? 0 : m[2] + 0)
+      if m[2] != ''
+        let oldend = m[2] - 1
+        let oldstart = m[1] - 1
+      else
+        let oldend = m[1] - 1
+        let oldstart = oldend
+      endif
       let old = []
       while a:diff[i] =~ '^. '
         call add(old, a:diff[i])
@@ -163,13 +172,25 @@ function s:Patch.parse_context(diff)
       if empty(m)
         throw 'parse error'
       endif
-      let newstart = m[1] - 1
-      let newcount = (m[2] == '' ? 0 : m[2] + 0)
+      if m[2] != ''
+        let newend = m[2] - 1
+        let newstart = m[1] - 1
+      else
+        let newend = m[1] - 1
+        let newstart = newend
+      endif
       let new = []
       while a:diff[i] =~ '^. '
         call add(new, a:diff[i])
         let i += 1
       endwhile
+      " XXX: adjust
+      if empty(old) && oldstart == oldend
+        let oldstart += 1
+      endif
+      if empty(new) && newstart == newend
+        let newstart += 1
+      endif
       let oldi = 0
       let newi = 0
       let edit = []
@@ -261,12 +282,12 @@ function s:Patch.parse_unified(diff)
       endif
       let i += 1
       let oldstart = m[1] - 1
-      let oldcount = (m[2] == '' ? 0 : m[2] + 0)
+      let oldcount = (m[2] == '' ? 1 : m[2] + 0)
       if oldcount == 0
         let oldstart += 1
       endif
       let newstart = m[3] - 1
-      let newcount = (m[4] == '' ? 0 : m[4] + 0)
+      let newcount = (m[4] == '' ? 1 : m[4] + 0)
       if newcount == 0
         let newstart += 1
       endif

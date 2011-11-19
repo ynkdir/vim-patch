@@ -6,3 +6,9 @@ while test -f "test${i}_old.txt"; do
   i=$((i + 1))
 done
 
+diff -c0 test11_old.txt test11_new.txt > test11.context
+diff -u0 test11_old.txt test11_new.txt > test11.unified
+diff -c0 test12_old.txt test12_new.txt > test12.context
+diff -u0 test12_old.txt test12_new.txt > test12.unified
+diff -c0 test13_old.txt test13_new.txt > test13.context
+diff -u0 test13_old.txt test13_new.txt > test13.unified

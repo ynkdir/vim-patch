@@ -1,3 +1,7 @@
+" TODO:
+" $ patch -o - test12_old.txt test12.context
+" $ patching file test12_old.txt
+" $ patch: **** replacement text or line numbers mangled in hunk at line 8
 
 let s:dir = expand('<sfile>:p:h')
 
@@ -18,12 +22,24 @@ function! s:test(name)
   let udiff = printf('%s/%s.unified', s:dir, a:name)
   let a = patch#patch(readfile(oldfile, 'b'), readfile(ndiff, 'b'))
   let b = s:syspatch(oldfile, ndiff)
+  if a != b
+    echo a
+    echo b
+    echoerr printf('%s normal failed', a:name)
+  endif
   let c = patch#patch(readfile(oldfile, 'b'), readfile(cdiff, 'b'))
   let d = s:syspatch(oldfile, cdiff)
+  if c != d
+    echo c
+    echo d
+    echoerr printf('%s context failed', a:name)
+  endif
   let e = patch#patch(readfile(oldfile, 'b'), readfile(udiff, 'b'))
   let f = s:syspatch(oldfile, udiff)
-  if a != b || c != d || e != f
-    echoerr printf('%s failed', a:name)
+  if e != f
+    echo e
+    echo f
+    echoerr printf('%s unified failed', a:name)
   endif
 endfunction
 
